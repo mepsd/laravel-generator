@@ -54,6 +54,38 @@ class $MODEL_NAME$DataTable extends DataTable
                     ['extend' => 'reset', 'className' => 'btn btn-default btn-sm no-corner',],
                     ['extend' => 'reload', 'className' => 'btn btn-default btn-sm no-corner',],
                 ],
+                 'initComplete' => 'function() {
+                                         var columns = this.api().init().columns;
+                                        this.api().columns().every(function(index) {
+                                            if (!columns[index] || columns[index].searchable) {
+                                          
+                                                var data=this.data().toArray();
+                                                var column = this;
+
+                                                var select = $("<select>", { "class": "form-control"});;
+                                                $("<option/>", {"value": "",
+                                                    "text": columns[index].title
+                                                }).appendTo(select);
+                                                
+                                                var uniqueData = data.filter(function(itm, i, data) {
+                                                    return i == data.indexOf(itm);
+                                                });
+                                                uniqueData.forEach(val => {
+                                                    $("<option/>", {
+                                                        "value": val,
+                                                        "text": val
+                                                    }).appendTo(select);
+                                                });
+                                                $(select).appendTo($(column.header()).empty())
+                                                .on("keyup change", function() {
+                                                    var term =  $(this).val()!="" ? $(this).val() : "";
+                                                    column.search(term,  false, false, true).draw();
+                                                        
+                                                    
+                                                });
+                                            }
+                                        })  
+                                    }'
             ]);
     }
 
